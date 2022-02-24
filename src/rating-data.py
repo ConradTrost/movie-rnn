@@ -16,4 +16,4 @@ df = df.sort_values('userId', ascending=True).reset_index(drop=True)
 
 df.drop(labels='movieId', axis=1, inplace=True)
 
-df.to_csv('../_clean-data/tmdbRatings.csv')
+df.to_csv('../_clean-data/tmdbRatings.csv', index=False)
