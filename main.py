@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from tensorflow import keras
 import tensorflow as tf
+import joblib
 
 df = pd.read_csv('./_clean-data/tmdbRatings.csv')
 
@@ -79,28 +80,27 @@ class RecommenderNet(keras.Model):
 
 model = RecommenderNet(num_users, num_movies, EMBEDDING_SIZE)
 model.compile(
-    loss=keras.losses.BinaryCrossentropy(), optimizer=keras.optimizers.Adam(lr=0.001)
+    loss=keras.losses.BinaryCrossentropy(), optimizer=keras.optimizers.Adam(learning_rate=0.001)
 )
 
 history = model.fit(
     x=x_train,
     y=y_train,
-    batch_size=128,
+    batch_size=1280,
     epochs=5,
     verbose=1,
     validation_data=(x_val, y_val),
 )
 
 model.save('./_models/movie')
-history.save('./_models/history')
 
-plt.plot(history.history['loss'])
-plt.plot(history.history['val_loss'])
-plt.title('model loss')
-plt.ylabel('loss')
-plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
-plt.show()
+try:
+    joblib.dump(history, './_models/history/history.json')
+except:
+    try:
+        joblib.dump(history.history, './_models/history/history.json')
+    except:
+        print('Yikes that didn\'t work')
 
 movie_df = pd.read_csv('./_clean-data/tmdbMovies.csv')
 
